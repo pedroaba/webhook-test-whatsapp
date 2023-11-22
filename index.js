@@ -46,6 +46,7 @@ app.post("/webhook", async (request, response) => {
                 for (const changes of Array.from(entry.changes)) {
                     if (changes.value.messages && changes.value.messages.length > 0) {
                         for (const message of Array.from(changes.value.messages)) {
+                            console.log(message)
                             const phoneNumberId = changes.value.metadata.phone_number_id;
                             const from = message.from;
                             const textMessage = message.text.body;
