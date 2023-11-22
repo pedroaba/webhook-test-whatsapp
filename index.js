@@ -40,6 +40,7 @@ app.post("/webhook", async (request, response) => {
 
    if (bodyParam.object) {
        if (bodyParam.entry) {
+           console.log(bodyParam.entry)
            for (const changes of bodyParam.entry.changes) {
                if (changes.value.messages && changes.value.messages.length > 0) {
                    for (const message of changes.value.messages) {
