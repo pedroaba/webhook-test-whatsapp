@@ -40,10 +40,10 @@ app.post("/webhook", async (request, response) => {
 
    if (bodyParam.object) {
        if (bodyParam.entry) {
-           console.log(bodyParam.entry)
-           for (const changes of bodyParam.entry.changes) {
+           console.log(JSON.stringify(bodyParam.entry))
+           for (const changes of Array.from(bodyParam.entry.changes)) {
                if (changes.value.messages && changes.value.messages.length > 0) {
-                   for (const message of changes.value.messages) {
+                   for (const message of Array.from(changes.value.messages)) {
                        const phoneNumberId = changes.value.metadata.phone_number_id;
                        const from = message.from;
                        const textMessage = message.text.body;
