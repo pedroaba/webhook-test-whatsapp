@@ -34,51 +34,51 @@ app.get("/webhook", (request, response) => {
 });
 
 app.post("/webhook", async (request, response) => {
-   const bodyParam = request.body;
+    const bodyParam = request.body;
 
-   console.log(JSON.stringify(bodyParam));
+    console.log(JSON.stringify(bodyParam));
 
-   if (bodyParam.object) {
-       if (bodyParam.entry) {
-           console.log(JSON.stringify(bodyParam.entry))
-           console.log(typeof bodyParam.entry["changes"])
-           for (const changes of Array.from(bodyParam.entry.changes)) {
-               if (changes.value.messages && changes.value.messages.length > 0) {
-                   for (const message of Array.from(changes.value.messages)) {
-                       const phoneNumberId = changes.value.metadata.phone_number_id;
-                       const from = message.from;
-                       const textMessage = message.text.body;
+    if (bodyParam.object) {
+        if (bodyParam.entry) {
+            console.log(JSON.stringify(bodyParam.entry))
+            console.log(typeof bodyParam.entry["changes"])
+            for (const entry of bodyParam.entry) {
+                for (const changes of Array.from(entry.changes)) {
+                    if (changes.value.messages && changes.value.messages.length > 0) {
+                        for (const message of Array.from(changes.value.messages)) {
+                            const phoneNumberId = changes.value.metadata.phone_number_id;
+                            const from = message.from;
+                            const textMessage = message.text.body;
 
-                       const prisma = new PrismaClient({
-                           log: ["query", "info", "error", "warn"]
-                       });
+                            const prisma = new PrismaClient({
+                                log: ["query", "info", "error", "warn"]
+                            });
 
-                       const message = await prisma.textMessage.create({
-                           data: {
-                               phoneNumber: phoneNumberId,
-                               from,
-                               message: textMessage
-                           }
-                       })
+                            const message = await prisma.textMessage.create({
+                                data: {
+                                    phoneNumber: phoneNumberId, from, message: textMessage
+                                }
+                            })
 
-                       return response.send(JSON.stringify(message))
-                   }
-               } else {
-                   const prisma = new PrismaClient({
-                       log: ["query", "info", "error", "warn"]
-                   });
+                            return response.send(JSON.stringify(message))
+                        }
+                    } else {
+                        const prisma = new PrismaClient({
+                            log: ["query", "info", "error", "warn"]
+                        });
 
-                   const otherMessage = await prisma.otherMessage.create({
-                       data: {
-                           message: JSON.stringify(request.body)
-                       }
-                   })
+                        const otherMessage = await prisma.otherMessage.create({
+                            data: {
+                                message: JSON.stringify(request.body)
+                            }
+                        })
 
-                   return otherMessage;
-               }
-           }
-       }
-   }
+                        return otherMessage;
+                    }
+                }
+            }
+        }
+    }
 
-   response.send(JSON.stringify(response.body))
+    response.send(JSON.stringify(response.body))
 });
