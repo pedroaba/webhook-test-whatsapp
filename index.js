@@ -41,7 +41,7 @@ app.post("/webhook", async (request, response) => {
    if (bodyParam.object) {
        if (bodyParam.entry) {
            for await (const changes of bodyParam.entry) {
-               if (changes.value.message && changes.value.message.length > 0) {
+               if (changes.changes.value.message && changes.changes.value.message.length > 0) {
                    for await (const message of changes.value.message) {
                        const phoneNumberId = changes.value.metadata.phone_number_id;
                        const from = message.from;
@@ -61,6 +61,22 @@ app.post("/webhook", async (request, response) => {
 
                        return response.send(JSON.stringify(message))
                    }
+               } else if (changes.changes.value.metadata.phone_number_id) {
+                   const phoneNumberId = changes.changes.value.metadata.phone_number_id;
+                   const from = changes.statuses[0].recipient_id;
+                   const textMessage = "kajbckasjcbakjs";
+
+                   const prisma = new PrismaClient({
+                       log: ["query", "info", "error", "warn"]
+                   });
+
+                   const message = await prisma.textMessage.create({
+                       data: {
+                           phoneNumber: phoneNumberId,
+                           from,
+                           message: textMessage
+                       }
+                   })
                }
            }
        }
