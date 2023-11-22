@@ -48,8 +48,8 @@ app.post("/webhook", async (request, response) => {
                         for (const message of Array.from(changes.value.messages)) {
                             console.log(message)
                             const phoneNumberId = changes.value.metadata.phone_number_id;
-                            const from = message.from;
-                            const textMessage = message.text.body;
+                            const from = message[0].from;
+                            const textMessage = message[0].text.body;
 
                             const prisma = new PrismaClient({
                                 log: ["query", "info", "error", "warn"]
