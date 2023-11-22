@@ -16,3 +16,8 @@ model TextMessage {
     phoneNumber String
     message String
 }
+
+model OtherMessage {
+  id String @id @default(uuid())
+  message String
+}
